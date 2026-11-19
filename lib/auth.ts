@@ -9,13 +9,36 @@ const hasGoogleOAuth =
   Boolean(process.env.GOOGLE_CLIENT_SECRET) &&
   process.env.GOOGLE_CLIENT_ID !== "your_google_client_id";
 
+function normalizeOrigin(url?: string): string | null {
+  if (!url) return null;
+  return url.trim().replace(/\/+$/, "");
+}
+
+const resolvedBaseURL =
+  normalizeOrigin(process.env.BETTER_AUTH_URL) ||
+  normalizeOrigin(process.env.NEXT_PUBLIC_APP_URL) ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+  "http://localhost:3000";
+
+const trustedOrigins = Array.from(
+  new Set(
+    [
+      "http://localhost:3000",
+      normalizeOrigin(process.env.BETTER_AUTH_URL),
+      normalizeOrigin(process.env.NEXT_PUBLIC_APP_URL),
+      process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+      process.env.VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+        : null,
+    ].filter((origin): origin is string => Boolean(origin))
+  )
+);
+
 export const auth = betterAuth({
   database: mongodbAdapter(db),
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL: resolvedBaseURL,
   secret: process.env.BETTER_AUTH_SECRET,
-  trustedOrigins: [
-    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-  ].filter(Boolean),
+  trustedOrigins,
 
   emailAndPassword: {
     enabled: true,
