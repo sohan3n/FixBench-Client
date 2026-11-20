@@ -6,6 +6,7 @@ import {
   ArrowRight,
   BadgeCheck,
   MapPin,
+  Navigation,
   Star,
   Store,
   Wrench,
@@ -17,11 +18,14 @@ export interface PublicServiceItem {
   category: string;
   description?: string;
   basePrice: number;
+  estimatedDuration?: string;
   serviceMode?: string;
+  serviceArea?: string;
   image?: string;
   technicianName: string;
   technicianEmail?: string;
   technicianPlan?: string;
+  averageRating?: number;
   ratingAverage?: number;
   reviewCount?: number;
   isAvailable?: boolean;
@@ -54,7 +58,8 @@ export function ServiceCard({ service }: ServiceCardProps) {
   const [imgFailed, setImgFailed] = useState(false);
 
   const modeInfo = formatServiceMode(service.serviceMode);
-  const ratingAvg = Number(service.ratingAverage) || 0;
+  const ratingAvg =
+    Number(service.averageRating ?? service.ratingAverage) || 0;
   const reviewCount = Number(service.reviewCount) || 0;
   const isProTech = service.technicianPlan === "pro";
 
@@ -108,8 +113,16 @@ export function ServiceCard({ service }: ServiceCardProps) {
           {service.title}
         </h3>
 
-        {/* 6. Technician Name & Rating */}
-        <div className="mt-2.5 flex items-center justify-between gap-2 text-xs text-slate-600 dark:text-slate-300">
+        {/* 5. Service Area */}
+        <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+          <Navigation className="h-3.5 w-3.5 shrink-0 text-blue-600 dark:text-blue-400" />
+          <span className="truncate">
+            {service.serviceArea || "Citywide Coverage"}
+          </span>
+        </div>
+
+        {/* 7. Technician Name & Rating */}
+        <div className="mt-2 flex items-center justify-between gap-2 text-xs text-slate-600 dark:text-slate-300">
           <div className="flex min-w-0 items-center gap-1.5">
             <span className="truncate font-medium">
               by {service.technicianName || "Verified Technician"}
@@ -145,13 +158,13 @@ export function ServiceCard({ service }: ServiceCardProps) {
               <span className="block text-[11px] font-medium uppercase tracking-wider text-slate-400">
                 Starts at
               </span>
-              {/* 5. Starting Price */}
+              {/* 6. Starting Price */}
               <span className="font-mono text-lg font-bold text-slate-900 dark:text-white">
                 {formatPrice(service.basePrice)}
               </span>
             </div>
 
-            {/* 7. View Details CTA */}
+            {/* 8. View Details CTA */}
             <Link
               href={`/services/${service._id}`}
               className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
