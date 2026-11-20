@@ -64,8 +64,16 @@ export function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Dashboard pages use their own dedicated Dashboard Layout (Phase 4.1)
-  if (pathname?.startsWith("/dashboard")) {
+  // Dashboard pages use their own dedicated Dashboard Layout (Phase 4.1).
+  // During client-side transitions (especially to 404/not-found routes) the
+  // `usePathname()` hook can briefly lag behind the actual URL, which would
+  // otherwise keep this Navbar mounted on /dashboard/* routes. Fall back to
+  // the browser's current location so the hide check stays in sync.
+  const isDashboardRoute =
+    pathname?.startsWith("/dashboard") === true ||
+    (typeof window !== "undefined" &&
+      window.location.pathname.startsWith("/dashboard"));
+  if (isDashboardRoute) {
     return null;
   }
 
