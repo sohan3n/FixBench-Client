@@ -44,7 +44,8 @@ interface ServiceDetailsResponse {
     _id: string;
     customerName: string;
     rating: number;
-    review: string;
+    review?: string;
+    reviewComment?: string;
     createdAt: string;
   }[];
 }
@@ -254,9 +255,9 @@ export default async function ServiceDetailsPage({
                         ))}
                       </div>
                     </div>
-                    {item.review && (
+                    {(item.reviewComment || item.review) && (
                       <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-                        {item.review}
+                        {item.reviewComment || item.review}
                       </p>
                     )}
                   </div>

@@ -33,7 +33,8 @@ export interface CustomerBooking {
   paymentStatus: BookingPaymentStatus;
   statusHistory: BookingStatusHistoryEntry[];
   rating: number | null;
-  review: string;
+  review?: string;
+  reviewComment?: string;
   createdAt: string;
   updatedAt: string;
 }

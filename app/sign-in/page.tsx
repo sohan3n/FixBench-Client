@@ -19,15 +19,6 @@ interface SignInPageProps {
 }
 
 export default async function SignInPage({ searchParams }: SignInPageProps) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (session?.user) {
-    const role = (session.user as { role?: string }).role;
-    redirect(getRoleDashboardPath(role));
-  }
-
   const resolvedParams = await searchParams;
   const rawCallback = Array.isArray(resolvedParams.callbackUrl)
     ? resolvedParams.callbackUrl[0]
@@ -35,6 +26,16 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
       (Array.isArray(resolvedParams.redirect)
         ? resolvedParams.redirect[0]
         : resolvedParams.redirect);
+
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (session?.user) {
+    const role = (session.user as { role?: string }).role;
+    const safeCallback = sanitizeCallbackUrl(rawCallback);
+    redirect(safeCallback || getRoleDashboardPath(role));
+  }
 
   const googleEnabled =
     Boolean(process.env.GOOGLE_CLIENT_ID) &&

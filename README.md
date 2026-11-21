@@ -48,3 +48,11 @@ NEXT_PUBLIC_API_URL=http://localhost:5000
 NEXT_PUBLIC_IMGBB_API_KEY=<your_imgbb_api_key>
 GOOGLE_CLIENT_ID=<your_google_client_id>
 GOOGLE_CLIENT_SECRET=<your_google_client_secret>
+
+---
+
+## NPM Packages Used
+
+**Dependencies:** `@base-ui/react`, `better-auth`, `class-variance-authority`, `cn`, `lucide-react`, `mongodb`, `next`, `next-themes`, `react`, `react-dom`, `shadcn`, `sonner`, `swiper`, `tw-animate-css`
+
+**Dev Dependencies:** `@tailwindcss/postcss`, `@types/node`, `@types/react`, `@types/react-dom`, `eslint`, `eslint-config-next`, `prettier`, `prettier-plugin-tailwindcss`, `tailwindcss`, `typescript`

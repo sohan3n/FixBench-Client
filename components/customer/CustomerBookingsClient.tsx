@@ -8,6 +8,7 @@ import {
   ChevronDown,
   ChevronUp,
   CreditCard,
+  Download,
   Loader2,
   MapPin,
   Search,
@@ -21,6 +22,7 @@ import type {
   CustomerBooking,
 } from "@/lib/customer-types";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
+import { printInvoice } from "@/lib/invoice";
 import { BookingTimeline } from "./BookingTimeline";
 import { CancelBookingModal } from "./CancelBookingModal";
 import { ReviewBookingModal } from "./ReviewBookingModal";
@@ -182,7 +184,7 @@ export function CustomerBookingsClient() {
         booking: CustomerBooking;
       }>(`/api/bookings/${bookingId}/review`, {
         method: "PATCH",
-        body: JSON.stringify({ rating, review }),
+        body: JSON.stringify({ rating, reviewComment: review }),
       });
 
       setBookings((prev) =>
@@ -453,6 +455,30 @@ export function CustomerBookingsClient() {
                         </button>
                       )}
 
+                      {/* Download Invoice (only for paid bookings) */}
+                      {booking.paymentStatus === "paid" && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            printInvoice({
+                              bookingId: booking._id,
+                              serviceTitle: booking.serviceTitle,
+                              category: booking.category,
+                              technicianName: booking.technicianName,
+                              customerName: booking.customerName,
+                              customerEmail: booking.customerEmail,
+                              amount: booking.finalAmount || booking.basePrice,
+                              transactionId: booking._id,
+                              paidAt: booking.updatedAt,
+                            })
+                          }
+                          className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+                        >
+                          <Download className="h-3.5 w-3.5" />
+                          <span>Invoice</span>
+                        </button>
+                      )}
+
                       {/* Timeline Toggle */}
                       <button
                         type="button"
@@ -479,7 +505,7 @@ export function CustomerBookingsClient() {
                         {booking.rating} / 5
                       </span>
                       <span className="text-slate-700 dark:text-slate-300">
-                        &ldquo;{booking.review}&rdquo;
+                        &ldquo;{booking.reviewComment || booking.review}&rdquo;
                       </span>
                     </div>
                     <span className="text-[11px] font-semibold text-amber-700/80 dark:text-amber-400/80">

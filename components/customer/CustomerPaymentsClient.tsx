@@ -7,6 +7,7 @@ import {
   Copy,
   CreditCard,
   DollarSign,
+  Download,
   Receipt,
   Wrench,
 } from "lucide-react";
@@ -15,6 +16,7 @@ import { apiAuthFetch } from "@/lib/api-client";
 import type { CustomerPayment } from "@/lib/customer-types";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
+import { printInvoice } from "@/lib/invoice";
 
 export function CustomerPaymentsClient() {
   const [payments, setPayments] = useState<CustomerPayment[]>([]);
@@ -150,7 +152,8 @@ export function CustomerPaymentsClient() {
                   <th className="pb-3 pr-4">Amount</th>
                   <th className="pb-3 pr-4">Transaction ID</th>
                   <th className="pb-3 pr-4">Payment Date</th>
-                  <th className="pb-3">Status</th>
+                  <th className="pb-3 pr-4">Status</th>
+                  <th className="pb-3">Invoice</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -199,6 +202,27 @@ export function CustomerPaymentsClient() {
                         status={payment.paymentStatus}
                         category="payment"
                       />
+                    </td>
+                    <td className="py-4">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          printInvoice({
+                            serviceTitle: payment.serviceTitle,
+                            technicianName: payment.technicianName,
+                            customerName: payment.customerName,
+                            customerEmail: payment.customerEmail,
+                            amount: payment.amount,
+                            currency: payment.currency,
+                            transactionId: payment.transactionId,
+                            paidAt: payment.paidAt,
+                          })
+                        }
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                        <span>Invoice</span>
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -253,6 +277,26 @@ export function CustomerPaymentsClient() {
                     <Copy className="ml-2 h-3.5 w-3.5 shrink-0 text-slate-400" />
                   </button>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    printInvoice({
+                      serviceTitle: payment.serviceTitle,
+                      technicianName: payment.technicianName,
+                      customerName: payment.customerName,
+                      customerEmail: payment.customerEmail,
+                      amount: payment.amount,
+                      currency: payment.currency,
+                      transactionId: payment.transactionId,
+                      paidAt: payment.paidAt,
+                    })
+                  }
+                  className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  <span>Download Invoice</span>
+                </button>
               </div>
             ))}
           </div>

@@ -86,6 +86,7 @@ export interface BookingItem {
   statusHistory: StatusHistoryEntry[];
   rating?: number;
   review?: string;
+  reviewComment?: string;
   createdAt: string;
 }
 

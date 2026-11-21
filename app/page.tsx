@@ -17,7 +17,7 @@ async function getFeaturedServices(): Promise<PublicServiceItem[]> {
     const response = await fetch(
       `${apiUrl.replace(/\/+$/, "")}/api/services?sort=newest&limit=6`,
       {
-        next: { revalidate: 60 },
+        cache: "no-store",
       }
     );
 

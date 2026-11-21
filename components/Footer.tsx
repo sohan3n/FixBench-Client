@@ -18,6 +18,8 @@ const REPAIR_CATEGORIES = [
   { label: "AC", href: "/services?category=AC" },
   { label: "Refrigerator", href: "/services?category=Refrigerator" },
   { label: "TV", href: "/services?category=TV" },
+  { label: "Washing Machine", href: "/services?category=Washing%20Machine" },
+  { label: "Electrical", href: "/services?category=Electrical" },
 ];
 
 export function Footer() {
