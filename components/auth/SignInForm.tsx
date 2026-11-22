@@ -1,98 +1,96 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
-import { toast } from "sonner";
-import { authClient } from "@/lib/auth-client";
-import { getRoleDashboardPath } from "@/lib/auth-redirect";
-import { BrandLogo } from "@/components/BrandLogo";
-import { GoogleSignInButton } from "./GoogleSignInButton";
+import { useState } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react"
+import { toast } from "sonner"
+import { authClient } from "@/lib/auth-client"
+import { getRoleDashboardPath } from "@/lib/auth-redirect"
+import { BrandLogo } from "@/components/BrandLogo"
+import { GoogleSignInButton } from "./GoogleSignInButton"
 
 interface SignInFormProps {
-  callbackUrl?: string | null;
-  googleEnabled?: boolean;
+  callbackUrl?: string | null
+  googleEnabled?: boolean
 }
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export function SignInForm({
   callbackUrl = null,
   googleEnabled = false,
 }: SignInFormProps) {
-  const router = useRouter();
+  const router = useRouter()
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
 
-  const [submitted, setSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [serverError, setServerError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [serverError, setServerError] = useState<string | null>(null)
 
-  const trimmedEmail = email.trim().toLowerCase();
+  const trimmedEmail = email.trim().toLowerCase()
 
   const emailError =
     submitted && !EMAIL_REGEX.test(trimmedEmail)
       ? "Please enter a valid email address."
-      : null;
+      : null
 
   const passwordError =
-    submitted && password.length === 0 ? "Please enter your password." : null;
+    submitted && password.length === 0 ? "Please enter your password." : null
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setSubmitted(true);
-    setServerError(null);
+    e.preventDefault()
+    setSubmitted(true)
+    setServerError(null)
 
     if (!EMAIL_REGEX.test(trimmedEmail) || password.length === 0) {
-      return;
+      return
     }
 
     try {
-      setIsSubmitting(true);
+      setIsSubmitting(true)
 
       const { data, error } = await authClient.signIn.email({
         email: trimmedEmail,
         password,
-      });
+      })
 
       if (error) {
         const message =
-          error.message || "Invalid email or password. Please try again.";
-        setServerError(message);
-        toast.error(message);
-        setIsSubmitting(false);
-        return;
+          error.message || "Invalid email or password. Please try again."
+        setServerError(message)
+        toast.error(message)
+        setIsSubmitting(false)
+        return
       }
 
       // Resolve user role from sign-in response or fresh session
-      let userRole = (data?.user as { role?: string } | undefined)?.role;
+      let userRole = (data?.user as { role?: string } | undefined)?.role
       if (!userRole) {
-        const sessionRes = await authClient.getSession();
-        userRole = (
-          sessionRes?.data?.user as { role?: string } | undefined
-        )?.role;
+        const sessionRes = await authClient.getSession()
+        userRole = (sessionRes?.data?.user as { role?: string } | undefined)
+          ?.role
       }
-
-      toast.success("Signed in successfully.");
-      router.refresh();
-      router.push(callbackUrl || getRoleDashboardPath(userRole));
+      toast.success("Signed in successfully.")
+      router.push(callbackUrl || getRoleDashboardPath(userRole))
+      router.refresh()
     } catch {
-      const fallback = "Unable to sign in right now. Please try again.";
-      setServerError(fallback);
-      toast.error(fallback);
-      setIsSubmitting(false);
+      const fallback = "Unable to sign in right now. Please try again."
+      setServerError(fallback)
+      toast.error(fallback)
+      setIsSubmitting(false)
     }
   }
 
   const signUpHref = callbackUrl
     ? `/sign-up?callbackUrl=${encodeURIComponent(callbackUrl)}`
-    : "/sign-up";
+    : "/sign-up"
 
   return (
-    <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
+    <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 dark:border-slate-800 dark:bg-slate-900">
       {/* Header */}
       <div className="flex flex-col items-center text-center">
         <BrandLogo variant="navbar" />
@@ -128,7 +126,7 @@ export function SignInForm({
             Email Address
           </label>
           <div className="relative">
-            <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Mail className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               id="signin-email"
               name="email"
@@ -139,7 +137,7 @@ export function SignInForm({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20 disabled:opacity-60 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+              className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pr-3.5 pl-10 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 focus:outline-none disabled:opacity-60 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
             />
           </div>
           {emailError && (
@@ -158,7 +156,7 @@ export function SignInForm({
             Password
           </label>
           <div className="relative">
-            <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Lock className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               id="signin-password"
               name="password"
@@ -169,13 +167,13 @@ export function SignInForm({
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20 disabled:opacity-60 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+              className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pr-10 pl-10 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 focus:outline-none disabled:opacity-60 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
             />
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
               aria-label={showPassword ? "Hide password" : "Show password"}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              className="absolute top-1/2 right-3 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
             >
               {showPassword ? (
                 <EyeOff className="h-4 w-4" />
@@ -194,7 +192,7 @@ export function SignInForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
           <span>{isSubmitting ? "Signing in..." : "Sign In"}</span>
@@ -205,7 +203,7 @@ export function SignInForm({
         <>
           <div className="my-5 flex items-center gap-3">
             <div className="h-px flex-1 bg-slate-200 dark:bg-slate-800" />
-            <span className="text-xs font-medium uppercase tracking-wider text-slate-400">
+            <span className="text-xs font-medium tracking-wider text-slate-400 uppercase">
               or continue with
             </span>
             <div className="h-px flex-1 bg-slate-200 dark:bg-slate-800" />
@@ -228,5 +226,5 @@ export function SignInForm({
         </Link>
       </p>
     </div>
-  );
+  )
 }

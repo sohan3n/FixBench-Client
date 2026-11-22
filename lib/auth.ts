@@ -16,6 +16,9 @@ function normalizeOrigin(url?: string): string | null {
 
 const resolvedBaseURL =
   normalizeOrigin(process.env.BETTER_AUTH_URL) ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : null) ||
   normalizeOrigin(process.env.NEXT_PUBLIC_APP_URL) ||
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
   "http://localhost:3000";
@@ -24,6 +27,8 @@ const trustedOrigins = Array.from(
   new Set(
     [
       "http://localhost:3000",
+      "http://localhost:3001",
+      "https://fix-bench.vercel.app",
       normalizeOrigin(process.env.BETTER_AUTH_URL),
       normalizeOrigin(process.env.NEXT_PUBLIC_APP_URL),
       process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
