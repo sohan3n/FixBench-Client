@@ -113,7 +113,12 @@ export function SignInForm({
         </div>
       )}
 
-      <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-4">
+      <form
+        onSubmit={handleSubmit}
+        noValidate
+        autoComplete="off"
+        className="mt-6 space-y-4"
+      >
         {/* Email */}
         <div>
           <label
@@ -158,7 +163,7 @@ export function SignInForm({
               id="signin-password"
               name="password"
               type={showPassword ? "text" : "password"}
-              autoComplete="current-password"
+              autoComplete="new-password"
               required
               disabled={isSubmitting}
               value={password}
