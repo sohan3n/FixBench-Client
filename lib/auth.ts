@@ -1,8 +1,9 @@
+import { cache } from "react";
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { jwt } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
-import { db } from "./mongodb";
+import { db, resetMongoClient } from "./mongodb";
 
 const hasGoogleOAuth =
   Boolean(process.env.GOOGLE_CLIENT_ID) &&
@@ -145,6 +146,24 @@ export const auth = betterAuth({
     }),
     nextCookies(),
   ],
+});
+
+export const getServerSession = cache(async (requestHeaders: Headers) => {
+  try {
+    return await auth.api.getSession({ headers: requestHeaders });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : String(error ?? "");
+    if (
+      message.includes("Topology is closed") ||
+      message.includes("MongoTopologyClosedError") ||
+      message.includes("MongoServerSelectionError")
+    ) {
+      await resetMongoClient();
+      return await auth.api.getSession({ headers: requestHeaders });
+    }
+    return null;
+  }
 });
 
 export type Session = typeof auth.$Infer.Session;

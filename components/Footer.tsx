@@ -146,11 +146,11 @@ export function Footer() {
               </li>
               <li className="flex items-start gap-2.5">
                 <Phone className="mt-0.5 h-4 w-4 shrink-0 text-teal-400" />
-                <span>+880 1700-123456</span>
+                <span>+880 1328465495</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-teal-400" />
-                <span>House 22, Road 4, Dhanmondi, Dhaka 1205</span>
+                <span>GR34+QX9, Chittagong - Khagrachhari Rd, Hathazari</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <Clock className="mt-0.5 h-4 w-4 shrink-0 text-teal-400" />
